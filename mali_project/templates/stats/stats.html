@@ -1,0 +1,136 @@
+{% extends 'mali_project/base.html' %}
+{% load static %}
+{% load countries %}
+
+{% block extrahead %}
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.4/randomColor.js"></script>
+{% endblock %}
+
+{% block title %}Statistiques{% endblock %}
+{% block overview %}
+<div  class='ui vertical stripe segment'>
+	<div class="ui relaxed grid stackable container">	
+		<div class="four wide column">
+			<div class="ui circular brown center aligned segment">
+				<h1 class="ui header">
+					{{total_form}} <p>Enregistrements</p>
+				</h1>
+				<div class="sub header">
+					Nombre total de formulaire soumis
+				</div>
+			</div>
+		</div>
+		{% for obj in genre_repartition %}
+			<div class="four wide column">
+				<div class="ui circular green segment">
+					<h1 class="ui header">
+						{{obj.nombre}} <p>{{obj.genre}}{{ obj.nombre|pluralize:'s'}}</p>
+					</h1>
+					<div class="sub header">
+						Nombre total de {{obj.genre}} enregistré
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+		<div class="four wide column">
+			<div class="ui circular red segment">
+				<h1 class="ui header">
+					{{year_avg}} <p>Ans</p>
+				</h1>
+				<div class="sub header">
+					Moyenne d'âge des voyageurs
+				</div>
+			</div>
+		</div>
+	</div>	
+</div>
+{% endblock %}
+{% block content %}
+	<div class="ui grid stackable container" class="container_wrap">
+		<div class="height wide column center aligned">
+			<h2 class="ui header">Diagramme des voyageurs entrant sur le territoire</h2>
+			<canvas id='donut_chart_venant_de'></canvas>
+		</div>
+		<div class="height wide column center aligned">
+			<h2 class="ui header">Diagramme des voyageurs sortant du territoire</h2>
+			<canvas id='donut_chart_allant_a'></canvas>
+		</div>
+		<div class="sixteen wide column" id="cross_table">
+			<h2 class="ui header">Statistiques des phénomènes sanitaires par genre</h2>
+			<table class="ui table">
+				<thead>
+					<th>Symptôme</th>
+					<th><i class="male icon"></i>Homme</th>
+					<th><i class="female icon"></i>Femme</th>
+					<th class="active">Total</th>
+				</thead>
+				<tbody>
+					{% for symptom, value in bar_chart_data.items %}
+					<tr>
+						<td>{{symptom}}</td>
+							{% for obj in value %}
+								{% if value|length >= 2 %}
+									<td class="{{symptom|lower}}">{{obj.count_response}}</td>
+								{% else %}
+									{% if obj.genre == 'Homme' %}
+										<td class="{{symptom|lower}}">{{obj.count_response}}</td>
+										<td id="{{symptom|lower}}">0</td>
+									{% elif obj.genre == 'Femme' %}
+										<td class="{{symptom|lower}}">0</td>
+										<td class="{{symptom|lower}}">{{obj.count_response}}</td>
+									{% endif %}
+							{% endif %}
+						{% endfor %}
+						<td id="total_{{symptom|lower}}" class="active"></td>
+					</tr>
+					{% endfor %}
+
+				</tbody>
+			</table>
+		</div>
+		
+	</div>
+	{% block datejs %}
+ {% endblock %}
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			function calculate(id){
+				total=0
+				$('.'+id).each(function(){ // all cell of the row for the symptom_id
+					total= total + parseInt($(this).text())
+				})
+				$('#total_'+id).text(total)
+			}
+
+			symptom_barChartData= {}
+			var tmp = {}
+
+			{% for symptom, value in bar_chart_data.items %}
+				//Initialize dict statistic
+				tmp['{{symptom}}'] = {
+					'Homme':{
+						'oui':0,
+						'non':0
+					},
+					'Femme':{
+						'oui':0,
+						'non':0
+					}
+				}
+				{% for item in value %}
+					tmp['{{symptom}}']['{{item.genre}}']['{{item.response}}'] = {{item.count_response}}
+				{% endfor %}
+				calculate('{{symptom}}')
+			{% endfor %}
+
+		
+			var donutChart_venant_de= document.getElementById('donut_chart_venant_de').getContext('2d');
+			var donutChart_allant_a = document.getElementById('donut_chart_allant_a').getContext('2d');
+			window.myPie = new Chart(donutChart_venant_de, {{pie_venant_de | safe}});
+			window.myPie1 = new Chart(donutChart_allant_a, {{pie_allant_a | safe}});
+		})	
+	</script>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'mali_project/base.html' %}
+{% load semanticui %}
+{% load static %}
+{% block extrahead %}
+	<link href="https://cdn.rawgit.com/mdehoog/Semantic-UI-Calendar/76959c6f7d33a527b49be76789e984a0a407350b/dist/calendar.min.css" rel="stylesheet" type="text/css" />
+	<script src="https://cdn.rawgit.com/mdehoog/Semantic-UI-Calendar/76959c6f7d33a527b49be76789e984a0a407350b/dist/calendar.min.js"></script>
+	<script src="https://rawcdn.githack.com/tobiasmuehl/instascan/4224451c49a701c04de7d0de5ef356dc1f701a93/bin/instascan.min.js"></script>
+	<script src="{% static 'js/forms.js' %}"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+
+{% endblock %}
+
+{% block overview %}
+
+<!-- <div  class='ui vertical stripe segment'> -->
+				<!-- <div class="ui three colum relaxed grid stackable container">	 -->
+					<!-- <div class="five wide column center aligned"> -->
+						<!-- <div class="ui header "> -->
+							<!-- <h2 >Responsive Design</h2> -->
+							<!-- <h2> -->
+							<!-- <img src="{% static 'img/rs.jpg' %}" width="128" height="128"> -->
+							<!-- </h2> -->
+						<!-- </div> -->
+						<!-- <p class="ui left aligned describe-text">The app has been designed to be adaptable on every modern devices you uses to make a registration. If you have tablet, smartphone ... Don't worry, the application will handle your device's screen size.</p> -->
+					<!-- </div> -->
+					<!-- <div class="six wide column center aligned"> -->
+						<!-- <div class="ui header"> -->
+							<!-- <h2 >QRcode based</h2> -->
+							<!-- <h2 > -->
+							<!-- <img src="{% static 'img/qr.jpg' %}" width="128" height="128"> -->
+							<!-- </h2> -->
+						<!-- </div> -->
+						<!-- <p>Each traveler's registration is identified  by an unique QRcode image. This allows administrator to gain time while searching a form in the database and to give any modification on it.</p> -->
+					<!-- </div> -->
+					<!-- <div class="five wide column center aligned"> -->
+						<!-- <div class="ui header"> -->
+							<!-- <h2 >Responsive Design</h2> -->
+							<!-- <h2> -->
+							<!-- <img src="{% static 'img/rs.jpg' %}" width="128" height="128"> -->
+							<!-- </h2> -->
+						<!-- </div> -->
+						<!-- <p class="ui left aligned describe-text">The app has been designed to be adaptable on every modern devices you uses to make a registration. If you have tablet, smartphone ... Don't worry, the application will handle your device's screen size.</p> -->
+					<!-- </div> -->
+				<!-- </div>	 -->
+			<!-- </div> -->
+{% endblock %}
+{% block content %}
+	<div class="ui container fluid">
+		<div class="ui two column vertical grid stackable" style="padding:30px;">
+			<div class="ten wide column" >
+				<h3 class="ui header center aligned">
+					Remplissez le formulaire  ci-dessous
+				</h3>
+				<form class="ui form" method="POST">
+					{% csrf_token %}
+					{% render_form form %}
+					<button id='submit_button' class='ui button center aligned primary huge' type="submit">Envoyer</button>
+				</form>
+			</div>
+			<div class="six wide column center aligned">
+				<h3 class="ui icon header">
+					Scanner un QRCode
+					<i class="camera icon"></i>
+					<div class="content">
+						<div class="sub header">
+							<p>Vous pouvez modifier votre enregistrement avant sa validation par un agent.</p>
+							<p>Faites passer votre QRcode après avoir cliquer sur le bouton ci-dessous afin d'etre automatique rediriger sur votre formulaire.</p>
+							<button id="scan_button" class="ui positive button" >Demarrer la caméra</button>
+
+						</div>
+						
+					</div>
+					
+					<video id="qrcode_scanner" width="80%"></video>
+				</h3>			
+			</div>
+		</div>
+	</div>
+	<!--Modal when success submit -->
+	<div class="ui basic modal">
+		<div class="ui icon header">
+			<i class="qrcode icon"></i>
+			Votre QRCode
+		</div>
+		<div class="content center aligned">
+			<div class="ui container fluid center aligned">
+				<div class="ui card">
+					<div class="image">
+						<div class="ui placeholder">
+							<div class="square image">
+								<!-- Utiliser par la fonction ajax pour afficher le qrcode generer -->
+							</div>
+						</div>
+					</div>
+					<div class="content">
+						<p>Veuillez bien conserver ce QRCode (dans votre appareil ou imprimez-le)</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="actions">
+			<div class="ui green ok inverted button">
+				<i class="checkmark icon"></i>
+				Yes
+			</div>
+		</div>
+	</div>
+	<!-- fin du modal  -->
+
+	<script src="{% static 'js/scanner.js' %}"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('.ui.sticky').sticky({
+				context: '#attached',
+				pushing: true
+			})
+	
+			$('input[id^="id_date"]').parent().parent().calendar({
+				type: 'date',
+				ampm: false,
+				formatter: {
+					date: function(date, setting){
+						if(!date) return '';
+						var day= date.getDate();
+						var month = date.getMonth() + 1;
+						var year= date.getFullYear();
+						return day + '/' + month + '/' + year;
+					}
+				}
+			})
+			$('#id_date_voyage').parent().parent().calendar({
+				ampm: false,
+				formatter: {
+					date: function(date, setting){
+						if(!date) return '';
+						var day= date.getDate();
+						var month = date.getMonth() + 1;
+						var year= date.getFullYear();
+						return day + '/' + month + '/' + year;
+					}
+				}
+			})
+			$('.message .close')
+				.on('click', function() {
+					$(this)
+					.closest('.message')
+					.transition('fade');
+				});
+		})
+	</script>
+{% endblock %}

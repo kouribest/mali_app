@@ -1,0 +1,37 @@
+{% extends 'mali_project/base.html' %}
+{% load static  %}
+
+
+  	{% block extrahead %}
+    <script src="https://rawcdn.githack.com/tobiasmuehl/instascan/4224451c49a701c04de7d0de5ef356dc1f701a93/bin/instascan.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+
+
+{% endblock %}
+    {% block content %}
+        <div class="ui container">
+            <video id="qrcode_scanner"></video>
+        </div>       
+        <script type="text/javascript">
+            $(document).ready(function(){
+                let scanner = new Instascan.Scanner({ video: document.getElementById('qrcode_scanner') });
+                scanner.addListener('scan', function (content) {
+                //redirect to the update page
+                window.location.href = window.location.href+content
+             });
+
+            Instascan.Camera.getCameras().then(function(cameras) {
+                if (cameras.length > 0) {
+                    scanner.start(cameras[0]);
+                } else {
+                     toastr.error('Camera introuvable', 'Aucune camera disponible trouvée sur votre appareil')
+                }
+            }).catch(function (e) {
+               toastr.error(e)
+            });
+
+                })
+        </script>
+    {% endblock %}

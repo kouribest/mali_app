@@ -1,0 +1,24 @@
+{% extends 'mali_project/base.html' %}
+{% load static %}
+
+{% block title %}Non authorisé{% endblock %}
+{% block overview %}{% endblock %}
+
+{% block content%}
+<div class="ui container container_wrap">
+	<div class="ui vertical segment center aligned">
+		<h1 class="ui icon header center aligned">
+			<i class="ban icon"></i> Droits insuffisants 
+			<div class="sub header">
+				<p>Vous n'avez pas les droits nécessaires pour acceder à cette ressource.</p>
+				{% if exception %}
+				<p><strong>Raison: </strong>{{exception}}</p>
+				{% endif %}
+				<p>Veuillez vous identifier <strong><a href="{% url 'login' %}">ICI</a></strong> avec un compte ayant les les droits</p>
+			</div>
+		</h1>
+	</div>
+</div>
+	
+{% endblock %}
+{% block datejs %}{% endblock %}

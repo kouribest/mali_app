@@ -1,0 +1,35 @@
+{% extends 'mali_project/base.html' %}
+{% block title %}Choisissez votre domaine{% endblock %}
+{% block overview %}{% endblock %}
+{% block content %}
+	<div class="ui container" id="project_selector">
+		<h2 class="ui header center aligned">Où souhaitez-vous vous enregistrer ?</h2>
+		<div class="ui middle aligned center aligned grid">
+			<div class="column">
+				<div class="ui placeholder segment">
+					<div class="ui two column stackable center aligned grid">
+						<div class="ui vertical divider">Or</div>
+						<div class="middle aligned row">
+							<div class="column">
+								<a href="https://ml.web-aeroform.fr" alt="Mali">
+									<h1 class="ui image header">
+										<img src="static/img/mali_flag.png">
+									</h1>
+								</a>
+							</div>
+							<div class="column">
+								<a href="https://rdc.web-aeroform.fr" alt="Congo">
+									<h1 class="ui image header">
+										<img src="static/img/congo_flag.png">
+									</h1>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  {% block datejs %}
+  {% endblock %}
+{% endblock %}

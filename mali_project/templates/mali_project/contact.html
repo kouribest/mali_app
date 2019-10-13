@@ -1,0 +1,41 @@
+{% extends 'mali_project/base.html' %}
+{% load static %}
+{% load semanticui %}
+
+{% block title%}Liste de tous les enregistrements{% endblock %}
+{% block overview %}{% endblock %}
+
+{% block content%}
+	
+	<div class="ui container container_wrap" >
+		{% if messages %}
+			{%for message in messages %}
+				<div class="ui {{message.tags}} message">
+		  		<i class="close icon"></i>
+		  		<div class="header">
+		    		{{message}}
+		  		</div>
+			</div>
+			{% endfor %}
+		{% endif %}
+		<form class="ui form" method="POST">
+			{% csrf_token %}
+			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+				{% render_form contact_form %}
+			<div class="g-recaptcha" data-sitekey="6LeA2JMUAAAAANtZagRgCtkjRHBk-VqqPk-FMdwc"></div>
+			<button class="ui button primary" type='submit'>Envoyer</button>
+		</form>
+	</div>
+	{% block datejs %}
+	{% endblock %}
+	<script type="text/javascript">
+		$('.message .close')
+  .on('click', function() {
+    $(this)
+      .closest('.message')
+      .transition('fade')
+    ;
+  })
+;
+	</script>
+{% endblock %}

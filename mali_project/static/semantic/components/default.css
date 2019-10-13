@@ -1,0 +1,20 @@
+#form_content{
+	margin-top: 9em;
+}
+
+h1.ui.header{
+	font-size: 3em;
+}
+
+.ui.menu .item img.logo {
+	 margin-right: 1.5em;
+}
+
+#header_segment{
+	min-height: 550px;
+}
+
+#help_segment{
+	margin-top: 3em;
+}
+

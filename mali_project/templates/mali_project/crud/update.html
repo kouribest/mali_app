@@ -1,0 +1,80 @@
+{% extends 'mali_project/base.html' %}
+{% load static %}
+{% load semanticui %}
+{% load humanize %}
+{% block extrahead %}
+	<link href="https://cdn.rawgit.com/mdehoog/Semantic-UI-Calendar/76959c6f7d33a527b49be76789e984a0a407350b/dist/calendar.min.css" rel="stylesheet" type="text/css" />
+	<script src="https://cdn.rawgit.com/mdehoog/Semantic-UI-Calendar/76959c6f7d33a527b49be76789e984a0a407350b/dist/calendar.min.js"></script>
+{% endblock %}
+
+{% block title %}Formulaire de {{object.nom_famille|title}} {{object.prenom}}{% endblock %}
+{% block content%}
+<div class="ui container stripe">
+	<h2 class="ui header center aligned">
+		Mise à jour du formulaire {{object.identifiant}}
+	</h2>
+	<div class="ui two column grid stackable">
+		<div class="ten wide column">
+			<form class="ui form" method="post">
+				{% csrf_token %}
+				{% render_form form %}
+				<button id='submit_button' class='ui button  primary' type="submit">Modifier</button>
+				{% if can_approbe %}
+					<button id='approbe_button' type='button' class='ui button positive'>Valider</button>
+				{% endif %}
+			</form>
+		</div>
+		<div class="six wide column">
+			<div class="ui card">
+				<div class="image">
+					{% with 'img/'|add:object.identifiant|add:'.jpeg' as qrcode_path %}
+						<img src="{% static qrcode_path %}" />
+					{% endwith %}
+				</div>
+				<div class="content">
+					<p>Veuillez bien conserver ce QRCode (dans votre appareil ou imprimez-la)</p>
+				</div>				
+			</div>
+		</div>
+	</div>
+</div>
+
+		<script type="text/javascript">
+			$(document).ready(function() {
+				function getCookie(cname) {
+					  var name = cname + "=";
+					  var decodedCookie = decodeURIComponent(document.cookie);
+					  var ca = decodedCookie.split(';');
+					  for(var i = 0; i <ca.length; i++) {
+					    var c = ca[i];
+					    while (c.charAt(0) == ' ') {
+					      c = c.substring(1);
+					    }
+					    if (c.indexOf(name) == 0) {
+					      return c.substring(name.length, c.length);
+					    }
+					  }
+					  return "";
+					}
+				$('#approbe_button').on('click', function(){
+
+					$.ajax({
+						'url': '{% url "approbe_form" object.identifiant %}',
+						'method': 'POST',
+						'headers':{
+							'X-CSRFToken': getCookie('csrftoken')
+						},
+						success: function (rsp) {
+							toastr.success(rsp.message)
+							setTimeout(function() {
+								window.history.back();
+							}, 2000)
+						},
+						error: function(error){
+							toastr.error(error.reason)
+						},
+					})
+				})
+			})
+		</script>
+{% endblock %}
