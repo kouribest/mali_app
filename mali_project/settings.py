@@ -113,10 +113,10 @@ WSGI_APPLICATION = 'mali_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'form_ghsa',
-        'USER': 'root',
-        'PASSWORD': 'soumaila',
-        'HOST': 'localhost',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
         'PORT': '',
     }
 }
