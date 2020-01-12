@@ -1,0 +1,22 @@
+version : "3"
+
+services:
+    database:
+        image: mysql:5.6
+        environment:
+            MYSQL_ROOT_PASSWORD: soumaila
+            MYSQL_DATABASE: form_ghsa
+        ports:
+            - "3306:3306"
+
+    aeroform:
+        command: python manage.py runserver 0.0.0.0:8001
+        build:
+            context: .
+            args: 
+                DJANGO_ADMIN_USERNAME: skouriba
+                DJANGO_ADMIN_PASSWORD: soumaila
+                DOMAIN: Mali
+        ports:
+            - "81:8001"
+

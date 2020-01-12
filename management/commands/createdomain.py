@@ -52,7 +52,6 @@ class Command(BaseCommand):
         # Enclose this whole thing in a try/except to catch
         # KeyboardInterrupt and exit gracefully.
         try:
-
             if hasattr(self.stdin, 'isatty') and not self.stdin.isatty():
                 raise NotRunningInTTYException("Not running in a TTY")
 

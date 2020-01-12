@@ -31,7 +31,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ')b$bjo14_kc8lryd4kt=q07x74+7-&9#b&nx9g0@2ii-))!j_4'
-CAPTCHA= '6LeA2JMUAAAAACgS1OL-apKzKm4ExJ5ilQ2P7dAn'
+CAPTCHA = os.environ.get('GOOGLE_CAPTCHA')
 # SESSION_COOKIE_SECURE= True
 
 # SECURE_SSL_REDIRECT= True
@@ -44,7 +44,7 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-INSTALLED_APPS =[
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,27 +54,22 @@ INSTALLED_APPS =[
     'django.contrib.humanize',
     'mali_project',
     'mali',
-    'rdc',    
+    'rdc',
     'django_filters',
     'django_countries',
-    'semanticuiforms', 
+    'semanticuiforms',
     'import_export',
 ]
 
-
-
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'mali_project.middleware.CurrentDomainMiddleware',
-    
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',  
 ]
 
 ROOT_URLCONF = 'mali_project.urls'
@@ -95,15 +90,6 @@ TEMPLATES = [
     },
 ]
 
-# TEMPLATE_CONTEXT_PROCESSORS = (
-#     'django.contrib.auth.context_processors.auth',
-#     'django.core.context_processors.debug',
-#     'django.core.context_processors.i18n',
-#     'django.core.context_processors.media',
-#     'django.contrib.messages.context_processors.messages',
-# )
-# TEMPLATE_DIRS = TEMPLATES[0]['DIRS']
-
 WSGI_APPLICATION = 'mali_project.wsgi.application'
 
 
@@ -113,11 +99,11 @@ WSGI_APPLICATION = 'mali_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'NAME': os.get,
+        'USER': os.environ.get('DJANGO_DATABASE_USERNAME'),
+        'PASSWORD': os.environ.get('DJANGO_DATABASE_PASSWORD'),
+        'HOST': os.environ.get(''),
+        'PORT': '3306',
     }
 }
 
@@ -139,9 +125,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-MEDIA_URL='/home/ubuntu/mali_project/'
-STATIC_URL = '/static/'
-STATIC_ROOT= '/home/ubuntu/mali_project/mali_project/static/'
+STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'mali_project', 'static')
+MEDIA_ROOT =  os.path.join(STATIC_ROOT, 'img')
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
@@ -156,7 +143,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
@@ -164,20 +150,3 @@ STATIC_URL = '/static/'
 
 CRISPY_TEMPLATE_PACK='semantic-ui'
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'semantic-ui')
-INTERNAL_IPS= ('51.254.116.225','91.165.0.97')
-if DEBUG:
-    DEBUG_TOOLBAR_PANELS = [
-        'debug_toolbar.panels.versions.VersionsPanel',
-        'debug_toolbar.panels.timer.TimerPanel',
-        'debug_toolbar.panels.settings.SettingsPanel',
-        'debug_toolbar.panels.headers.HeadersPanel',
-        'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
-        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-        'debug_toolbar.panels.templates.TemplatesPanel',
-        'debug_toolbar.panels.cache.CachePanel',
-        'debug_toolbar.panels.signals.SignalsPanel',
-        'debug_toolbar.panels.logging.LoggingPanel',
-        'debug_toolbar.panels.redirects.RedirectsPanel',
-    ]
-    SHOW_TOOLBAR_CALLBACK = True

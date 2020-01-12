@@ -49,10 +49,10 @@ TYPE_VOYAGE =[
 
 
 class FormML(FormBase):
+	motif_voyage= forms.MultipleChoiceField(choices= MOTIF_VOYAGE, label= 'Quel est le motif de votre voyage ?')
+	hebergement= forms.MultipleChoiceField(choices= HEBERGEMENT,  label= 'Où est-ce que vous serez hebergé ?')
 	autre_element= forms.ChoiceField(choices=OTHER_ELEMENT, label= "Voyagez-vous avec l'un des elements suivants ?")
 	saignement_nez= forms.ChoiceField(choices=RADIO_CHOICES, initial= 'Non', widget= forms.RadioSelect(), label="Saignement du nez")
-	hebergement= forms.MultipleChoiceField(choices= HEBERGEMENT,  label= 'Où est-ce que vous serez hebergé ?')
-	motif_voyage= forms.MultipleChoiceField(choices= MOTIF_VOYAGE, label= 'Quel est le motif de votre voyage ?')
 	premiere_visite= forms.ChoiceField(label='Est-ce votre première visite ?', choices= RADIO_CHOICES, initial='Non', widget= forms.RadioSelect())
 	fievre= forms.ChoiceField(choices= RADIO_CHOICES, initial='Non', widget= forms.RadioSelect(), label='Fièvre')
 	diarrhee_vomissement= forms.ChoiceField(choices= RADIO_CHOICES, initial= 'Non', widget= forms.RadioSelect(), label='Vomissement ou Diarrhée')
@@ -67,7 +67,6 @@ class FormML(FormBase):
 		fields= '__all__'
 		exclude= ('etat',)
 		layout=[
-			("Field", "domain"),
 			("Field", 'identifiant'),
 			("Text", "<h3 class=\"ui dividing header left aligned\">Informations sur le vol</h3>"),
 			("Two Fields",

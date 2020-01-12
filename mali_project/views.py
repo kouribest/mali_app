@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
+import re, os, qrcode, requests, json, random
 from django.shortcuts import render_to_response, render, redirect, get_object_or_404
 from django.views.generic import View
 from django.contrib.auth import authenticate, login, logout
@@ -10,73 +11,32 @@ from django.db.models import Count
 from django.db.models.functions import Lower
 from datetime import datetime
 from mali_project.crud_view.crud_view import DomainMixin
+from mali_project.forms import ContactForm, LoginForm
 from mali.forms import FormML
 from rdc.forms import FormRDC
-from mali_project.forms import ContactForm, LoginForm
-from mali_project.models import Domain
 from mali.models import MaliModel
 from rdc.models import RDCModel
-import re, os, qrcode, requests, json, random
 from mali_project import settings
-from django.db.models import ExpressionWrapper, DecimalField, F  
+from django.db.models import Avg, ExpressionWrapper, DecimalField, F  
 from django.db.models.functions import ExtractYear, ExtractMonth 
-from django.db.models import Avg
-from django_countries.fields import Country
 from django.forms.models import model_to_dict
-from django.db import connection
+from django.views.decorators.csrf import csrf_exempt
+
+
 
 DOMAIN_MAP = {
 	'Mali': MaliModel,
 	'Congo': RDCModel
 }
+domain = os.environ.get('DOMAIN', 'Mali')
 
-
-
-# def validate(request):
-# 	# initialise a dict of all type field regex
-# 	regex_dict = {
-# 		'date_regex': """(\d{2}[\/]){2}\d{4}""",
-# 		'text_regex': '\w+',
-# 	}
-# 	target = request.GET.get('trigger')  # get input which triggered ajax event
-# 	target_value = request.GET.get('value')  # get the value
-
-# 	# the response to send after all process
-# 	send_response = {}
-# 	message = ''
-# 	date_used = False
-
-# 	if 'Date' in target:  # if target is a date type
-# 		p = re.compile(regex_dict['date_regex'])
-# 		date_used = True  # use date regex
-# 	else:
-# 		p = re.compile(regex_dict['text_regex'])  # otherwise text type
-
-# 	if p.match(target_value):
-# 		send_response = {
-# 			'is_ok': True,
-# 			'message': 'Champs valide',
-# 		}
-# 	else:
-# 		if date_used:
-# 			message = 'le format de date soit etre Jour/Mois/Annee'
-# 		else:
-# 			message = 'Format de champ de invalide'
-# 			send_response = {
-# 				'is_ok': False,
-# 				'message': message,
-# 			}
-
-# 	return JsonResponse(send_response)
-
-# # Method that generate the qrcode associated to id of each form
 
 
 def home(request):
-	domain= request.subdomain
+	
 	if domain:
-		form = FormML(initial={'domain': domain}) if domain.name == 'Mali' else FormRDC(
-			initial={'domain': request.subdomain})
+		form = FormML(initial={'domain': domain}) if domain == 'Mali' else FormRDC(
+			initial={'domain': domain})
 		return render(request, 'mali_project/index.html', {'form': form})
 	else:
 		return render(request, 'mali_project/project_selector.html')
@@ -85,11 +45,13 @@ def scanView(View):
 	return render(request, 'mali_project/scan.html')
 
 # Requete ajax --> a deplacer dans une nouvelle application django
+@csrf_exempt
 def addform(request):
-	domain = request.subdomain
+	
 	if request.method == 'POST':
-		form = FormML(request.POST or None) if domain.name == 'Mali' else FormRDC(
-			request.POST or None, initial={'domain': request.subdomain})
+		form = FormML(request.POST or None) if domain == 'Mali' else FormRDC(
+			request.POST or None)
+
 		if form.is_valid():
 			form_id= request.POST.get('identifiant')
 			response_template = "<img src='static/img/{}.jpeg' />"
@@ -114,12 +76,11 @@ class RecordFinder(DomainMixin, View):
 		
 		return JsonResponse(result_json)
 		
-
-
 # Requete ajax --> a deplacer dans une nouvelle application django
 def approbeForm(request, form_id):
+
 	if request.is_ajax() and request.method == 'POST':
-		model = MaliModel if request.subdomain.name == 'Mali' else RDCModel
+		model = MaliModel if domain == 'Mali' else RDCModel
 		obj_to_approbe = get_object_or_404(model, pk = form_id)
 		obj_to_approbe.etat= 'Valide'
 		obj_to_approbe.save()
@@ -194,15 +155,15 @@ class StatsView(DomainMixin, View):
 	
 	def get(self, request):
 		RDC_STATS_FIELDS=[
-		'perte_appetit',
-		'fatigue_intense',
-		'douleur_musculaire',
-		'respiration_difficile',
-		'douleur_abdominale',
-		'difficulte_avaler','yeux_rouge',
-		'saignement_inexplique',
-		'deces_inexplique',
-	]
+			'perte_appetit',
+			'fatigue_intense',
+			'douleur_musculaire',
+			'respiration_difficile',
+			'douleur_abdominale',
+			'difficulte_avaler','yeux_rouge',
+			'saignement_inexplique',
+			'deces_inexplique',
+		]
 
 		MALI_STATS_FIELDS= [
 			'fievre',
@@ -216,7 +177,7 @@ class StatsView(DomainMixin, View):
 		chart_scope = MALI_STATS_FIELDS if self.domain == 'Mali' else RDC_STATS_FIELDS
 		context = {}
 		try:
-			model = DOMAIN_MAP[request.subdomain.name]
+			model = DOMAIN_MAP[domain]
 		except KeyError:
 			raise Exception('Unknown subdomain')
 
@@ -228,9 +189,8 @@ class StatsView(DomainMixin, View):
 		while len(chart_scope) > 0 :
 			item = chart_scope.pop() 
 			chart_args[item] = Count(item)
-			print("hey")
 			context[item] = model.objects.values('genre', response=Lower(item)).order_by('-genre').annotate(count_response= chart_args[item]).filter(response=u'oui')
-			print(connection.queries)
+			
 			del chart_args[item]
 
 		result_avg= model.objects.annotate(age=datetime.now().year- ExtractYear('date_naissance')).aggregate(moyenne=Avg('age'))['moyenne']

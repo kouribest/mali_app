@@ -49,7 +49,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         domain = options['domain']
         name = options['name']
-        owner= options['owner']
+        owner = options['owner']
         database = options['database']
 
         verbose_domain_field_name = self.domain_field.verbose_name
@@ -99,7 +99,6 @@ class Command(BaseCommand):
             if not owner:
                 raise CommandError('%s cannot be blank' % capfirst(verbose))
                
-
         except KeyboardInterrupt:
             self.stderr.write("\nOperation cancelled.")
             sys.exit(1)

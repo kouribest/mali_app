@@ -1,12 +1,14 @@
-# -*- coding: utf-8 -*
+ # -*- coding: utf-8 -*
+import os, qrcode
 from django import forms
 from django.urls import reverse
 from mali_project.models import BaseModel, Message
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from mali_project.settings import STATIC_ROOT
-import os, qrcode
 from datetime import datetime, timedelta
+from django_countries import countries
+from mali_project.settings import MEDIA_URL
 
 ICON_GENRE = (
 	(u"Homme", u"Homme|man"),
@@ -37,17 +39,20 @@ STATE=(
 	(u"Valide",u"Valide"),	
 )
 
-class FormBase(forms.ModelForm):
-	genre = forms.ChoiceField(choices= ICON_GENRE, widget=forms.TextInput(attrs={"_override": "IconSelect"}))
-	type_voyage = forms.ChoiceField(label= 'Moyen de voyage', choices= TYPE_VOYAGE, initial='Vol', widget=forms.TextInput(attrs={"_override":"IconSelect", "id":"id_type_voyage"}))
+COUNTRY = [(y, y) for y in countries.countries.values()]
 
+
+class FormBase(forms.ModelForm):
+	genre = forms.ChoiceField(choices=ICON_GENRE, widget=forms.TextInput(attrs={"_override": "IconSelect"}))
+	type_voyage = forms.ChoiceField(label='Moyen de voyage', choices=TYPE_VOYAGE, initial='Vol', widget=forms.TextInput(attrs={"_override":"IconSelect", "id":"id_type_voyage"}))
+	allant_a = forms.ChoiceField(label='', choices=COUNTRY)
+	venant_de = forms.ChoiceField(label='', choices=COUNTRY)
 
 	def save(self, commit=True):
-
 		qrcode_data = self.cleaned_data['identifiant']
 		path = os.path.join(STATIC_ROOT, 'img', str(qrcode_data)+'.jpeg')
 
-		# Generer un nouveau QRCode si le formulaire n'en pas deja 
+		# Generer un nouveau QRCode si le formulaire n'en a pas deja 
 		if not os.path.exists(path): 
 			qr = qrcode.QRCode(
 				version=2,
@@ -73,14 +78,13 @@ class FormBase(forms.ModelForm):
 		date_voyage = data.date()
 		today_date= datetime.utcnow().date()
 		if date_voyage < today_date:
-			raise forms.ValidationError(('Vous ne pouvez enregistrer un voyage anterieur'))
+			raise forms.ValidationError(('Vous ne pouvez enregistrer un voyage antérieur'))
 		return date_voyage
 
 	class Meta:
 		fields = '__all__'
 		model = BaseModel
 		widgets = {
-			'domain': forms.HiddenInput(attrs=({'readonly': 'readonly'})),
 			'etat': forms.HiddenInput(attrs={'readonly': 'readonly'}),
 			'identifiant': forms.TextInput(attrs=({'readonly': 'readonly'})),
 			'genre': forms.TextInput(attrs={'_icon': 'genderless'}),

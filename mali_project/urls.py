@@ -24,7 +24,7 @@ from mali_project.crud_view.crud_view import *
 
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls), name='admin'),
+    url(r'^admin/', admin.site.urls, name='admin'),
     url(r'^login/', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     url(r'^$', home, name='home'),
@@ -38,4 +38,4 @@ urlpatterns = [
     url(r'^update_registration/(?P<pk>\w{6}$)', UpdateForm.as_view(), name='update_registration'),
     url(r'^about/', about, name='about'),
     url(r'^stats/', StatsView.as_view(), name='stats'),
-] +static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
