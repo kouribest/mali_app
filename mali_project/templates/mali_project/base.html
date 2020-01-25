@@ -1,0 +1,185 @@
+{% load static %}
+{% load semanticui %}
+<!DOCTYPE html>
+<html lang="fr">
+	{% block head %}
+		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<link rel="stylesheet" type="text/css" href="{% static 'semantic/semantic.min.css' %}">
+			<link rel="stylesheet" type="text/css" href="{% static 'css/default.css' %}">
+			<link rel="stylesheet" type="text/css" href="{% static 'toastr/toastr.css' %}">
+			<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+			<script src="{% static 'semantic/semantic.min.js' %}"></script>
+			<title>{% block title %}Bienvenue{% endblock %}</title>
+			
+			{% block extrahead %}
+			{% endblock %}
+		</head>
+	{% endblock %}
+	<body>
+		<div id="main">
+			<div class="ui inverted vertical segment" id='header_segment'>
+			<div class="ui inverted large top stackable menu borderless">
+				<div class="ui container">
+					<a class="header item" href='https://web-aeroform.fr/'>
+						<img class="logo" src="{% static 'img/logo.png' %}" width="48" height="48">GHSA
+					</a>
+					<a class="item" href="{% url 'home' %}"> Home </a>
+					<a class="item" href="{% url 'about' %}" > A propos </a>
+					<a class="item" href="{% url 'contact' %}"> Contact </a>
+					<div class="ui search item">
+						<div class="ui icon input">
+							<input class="prompt" type="text" placeholder="Rechercher un formulaire...">
+							<i class="search icon"></i>
+						</div>
+						<div class="results"></div>
+					</div>
+					
+					<div class="right menu">
+						{% if request.user.is_active %}
+							<div class="ui dropdown item">
+								<i class="user circle icon"></i>{{request.user}}
+								<div class="menu">
+									<a class="item" href="{% url 'record_list' %}"> <i class="file alternate outline icon"></i>Tous les enregistrements</a>
+									<a class="item" href="{% url 'stats' %}" ><i class="chart bar icon"></i>Voir les statistiques</a>
+									{% if request.user.is_staff %}
+										<div class="ui divider"></div>
+										<a class="item" href="{% url 'admin:index' %}" ><i class="cog icon"></i>Administration Django</a>
+									{% endif %}
+									<div class="ui divider"></div>
+									<a class="item" href="{% url 'logout' %}"><i class="power off icon"></i>Deconnexion</a>
+								</div>
+							</div>
+						{% else %}
+							<a class="medium ui inverted button item" href="{% url 'login' %}"><i class="lock icon"></i>S'authentifier</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		{% block overview %}
+			<!-- used to display presentation or help before the form --> 
+		{% endblock %}
+		{% block content %}
+			<!-- contain the form and the qrcode scanner -->
+		{% endblock %}
+		
+		</div> <!-- end of the wrapper main  -->
+		{% block footer %}
+			<div class="ui inverted segment footer">
+				<div class="ui center aligned container">
+					<div class="ui inverted divided stackable grid">
+						<div class="sixteen wide column">
+							<div class="ui inverted header">Concepteurs</div>
+							<div class="ui inverted horizontal list">
+								<div class="item">
+									<img class="ui avatar image" src="{% static 'social_icon/man.png'%}">
+									<div class="content">
+										<div class="header">
+											<a href="https://www.linkedin.com/in/man-in-the-middle/">
+												KOURIBA Soumaila
+											</a>
+										</div>
+										<div class="description">
+											Developer
+										</div>
+									</div>
+								</div>
+								<div class="item">
+									<img class="ui avatar image" src="{% static 'social_icon/man1.png'%}">
+									<div class="content">
+										<div class="header">
+											<a href="https://www.linkedin.com/in/souleymane-sawadogo-32537564/">
+												Dr SAWADOGO Souleymane
+											</a>
+										</div>
+										<div class="description">
+											Admin
+										</div>
+									</div>
+								</div>
+								<div class="item">
+									<img class="ui avatar image" src="{% static 'social_icon/man1.png'%}">
+									<div class="content">
+										<div class="header">
+											<a href="https://www.linkedin.com/in/ousmane-ly-9b115935/">
+												Dr LY Ousmane
+											</a>
+										</div>
+										<div class="description">
+											Project Owner
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endblock %}
+		<script src="{% static 'toastr/toastr.js' %}"></script>
+		<script type="text/javascript">
+			{% block notification %}
+				{% if messages %}
+					{% for message in messages %}
+							{% if message.tags == 'success'%}
+									toastr.success('{{message}}')
+							{% else %}
+									toastr.warning('{{message}}')
+							{% endif %}
+					{% endfor %}
+				{% endif %}
+			{% endblock notification %}
+		
+			{% block datejs %}
+					$('input[id^="id_date"]').parent().parent().calendar({
+						type: 'date',
+						ampm: false,
+						formatter: {
+							date: function(date, setting){
+								if(!date) return '';
+								var day= date.getDate();
+								var month = date.getMonth() + 1;
+								var year= date.getFullYear();
+								return day + '/' + month + '/' + year;
+							}
+						}
+					})
+					$('#id_date_voyage').parent().parent().calendar({
+						ampm: false,
+						formatter: {
+							date: function(date, setting){
+								if(!date) return '';
+								var day= date.getDate();
+								var month = date.getMonth() + 1;
+								var year= date.getFullYear();
+								return day + '/' + month + '/' + year;
+							}
+						}
+					})
+			{% endblock %}
+			$('.ui.dropdown').dropdown();
+			$('.ui.search').search({
+			// change search endpoint to a custom endpoint by manipulating apiSettings
+				apiSettings: {
+					debug: true,
+					url: '/search/{query}'
+				},
+				fields : {
+					results: 'results',
+					title: 'prenom',
+					description: 'nom_famille'
+				},
+				showNoResults: true,
+				onSelect(result, response){
+					window.location= 'update_registration/'+result['identifiant']
+				}
+			})
+		</script>
+		{% block extrajs %}
+			
+		{% endblock extrajs %}
+	</body>
+</html>

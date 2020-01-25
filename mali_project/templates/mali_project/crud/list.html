@@ -1,0 +1,131 @@
+{% extends 'mali_project/base.html' %}
+{% load static %}
+{% load semanticui %}
+{% load humanize %}
+{% block title %}Liste des enregistrements{% endblock %}
+
+{% block content %}
+	<div class="ui container stripe fluid" style="padding:30px;">
+		<div class="ui vertical grid stackable">
+			<div class="eleven wide column">
+				<h2 class="ui header center aligned">Enregistrements necessitant une validation</h2>
+				<table class="ui striped table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Nom</th>
+							<th>Prenom</th>
+							<th>Sexe</th>
+							<th>Moyen de transport</th>
+							<th>Date du voyage</th>
+							<th>Date d'enregistrement</th>
+							<th>Statut</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for obj in object_list %}
+							<tr class="{% if obj.etat == 'Invalide'%}error{% else%}positive{% endif %}">
+								<td>
+									<div class="ui button trigger">{{obj.identifiant}}</div>
+									<div class="ui flowing popup bottom left transition hidden">
+										<h4 class="ui header center aligned">Actions</h4>
+										<div class="ui buttons">
+											<a class="ui positive button "href="{% url 'update_registration' pk=obj.identifiant %}">Modifier</a>
+											<div class="or"></div>
+					
+											<a class="ui negative button" href="{% url 'delete_record' pk=obj.identifiant %}">Supprimer</a>
+										</div>
+									</div>
+								</td>
+								<td>{{obj.nom_famille}}</td>
+								<td>{{obj.prenom}}</td>
+								<td>{{obj.genre}}</td>
+								<td>{{obj.type_voyage}}</td>
+								<td>{{obj.date_voyage}}</td>
+								<td>Il y a {{obj.date_enregistrement|timesince}}</td>
+								<td>{{obj.etat}}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+					{% if is_paginated %}
+						<tfoot>
+						<tr>
+							<th colspan="8">
+								<div class="ui right floated pagination menu ">
+									{% if page_obj.has_previous %}
+										<a class="icon item paginator" href='' page_target="1">
+											<i class="angle double left icon"></i>
+										</a>
+										<a class="icon item paginator" href='' page_target="{{page_obj.previous_page_number}}">
+											<i class="left chevron icon"></i>
+										</a>
+
+									{% else %}
+										<a class="ui disabled item"><i class="left chevron icon"></i></a>
+										<a class="ui disabled item"><i class="angle double left icon"></i></a>
+
+									{% endif %}
+									{% for i in page_step %}
+										{% if i >= 1 and i <= paginator.num_pages %}
+											{% if page_obj.number == i %}
+												<a class="icon active item paginator" href='' page_target="{{i}}">{{i}}</a>
+											{% else %}
+												<a class="icon item paginator" href='' page_target="{{i}}">{{i}}</a>
+											{% endif %}
+										{% endif %}
+
+									{% endfor %}
+									{% if page_obj.has_next %}
+										<a class="icon item paginator" href='' page_target="{{ page_obj.next_page_number }}">
+											<i class="right chevron icon "></i>
+										</a>
+										<a class="icon item paginator" href='' page_target="{{ paginator.num_pages }}">
+											<i class="angle double right icon "></i>
+										</a>
+
+									{% else %}
+										<a class="icon disabled item"><i class="right chevron icon "></i></a>
+										<a class="icon disabled item"><i class="angle double right icon"></i></a>
+									{% endif %}
+								</div>
+							</th>
+						</tr>
+						</tfoot>
+					{% endif %}
+				</table>
+			</div>
+			<div class="four wide column">
+				<div class="ui left aligned header">
+					<i class="filter icon"></i> Filtre 
+				</div>
+				<form class="ui form">
+					{{filter_form}}
+					<br>
+					<button class="ui primary button center aligned " type="submit">Filtrer</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% block datejs %}
+	{% endblock %}
+		<!-- Fin du container -->
+		<script type="text/javascript">
+			$(document).ready(function(e){
+				//Get current full URL
+				url_search = new URLSearchParams(window.location.search) 
+	
+				$('.paginator').on('click', function(e){
+					e.preventDefault() //void page reload
+					page_target= $(this).attr('page_target')
+					url_search.set('page', page_target) //update the page value
+					window.location= window.location.pathname + '?'+url_search.toString()
+
+				})
+
+				$('.trigger').popup({
+					on    : 'click',
+				})
+			})
+
+		</script>
+	{% endblock %}

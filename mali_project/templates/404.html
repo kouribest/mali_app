@@ -1,0 +1,20 @@
+{% extends 'mali_project/base.html' %}
+{% load static %}
+
+{% block title %}Page/Objet introuvable{% endblock %}
+{% block overview %}{% endblock %}
+
+{% block content%}
+	<div class="ui vertical segment">
+		<h1 class="ui icon header center aligned">
+			<i class="close icon"></i> Erreur 404 
+			<div class="sub header">
+				<p>Page introuvable. Votre rêquete ne peut aboutir</p>.
+				<p>Veuillez contacter l'administrateur du site <a href="mailto:skouriba@outlook.fr"> KOURIBA Soumaila</p>
+			</div>
+		</h1>
+		<!-- <div class="ui container " id="error_page">
+			<img class="ui image center aligned fluid" src="{% static 'img/error.jpg' %}" width="100%">
+		</div> -->
+	</div>
+{% endblock %}
