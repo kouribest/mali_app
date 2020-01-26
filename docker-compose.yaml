@@ -3,25 +3,21 @@ version : "3"
 services:
     database:
         image: mysql:5.6
+        volumes:
+            - "~/mali_project/db:/var/lib/mysql"
         env_file:
              - env/.db_env
         ports:
             - "3306:3306"
     aeroform:
-        image: skouriba/aeroform
+        build: .
         command: python manage.py runserver 0.0.0.0:8001
         env_file:
             - env/.aero_env
-        deploy:
-            replicas: 4
-            restart_policy: 
-                condition: on-failure
-            resources: 
-                limits:
-                    cpus: '0.1'
-                    memory: '512MB'
         ports:
             - "81:8001"
+        depends_on:
+            - "database"
 
     visualizer:
         image: dockersamples/visualizer:stable

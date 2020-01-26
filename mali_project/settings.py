@@ -31,7 +31,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('APPLICATION_SECRET', '')
-CAPTCHA = '6LeA2JMUAAAAACgS1OL-apKzKm4ExJ5ilQ2P7dAn'
+CAPTCHA = os.environ.get("CAPTCHA")
 # SESSION_COOKIE_SECURE= True
 
 # SECURE_SSL_REDIRECT= True
