@@ -10,4 +10,7 @@ python manage.py migrate
 
 #And then we create finally the superuser defined in the environment file
 echo "Creating the super user"
-python manage.py initaluser --username $DJANGO_ADMIN_USERNAME --password $DJANGO_ADMIN_PASSWORD --email $DJANGO_ADMIN_EMAIL
+python manage.py initialuser --username $DJANGO_ADMIN_USERNAME --password $DJANGO_ADMIN_PASSWORD --email $DJANGO_ADMIN_EMAIL --no-input
+
+#Running up the server
+python manage.py runserver 0.0.0.0:8000

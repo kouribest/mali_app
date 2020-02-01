@@ -9,15 +9,14 @@ env APP_HOME = /opt/app
 
 workdir $APP_HOME
 
-RUN apk update && apk add gcc libc-dev make libffi-dev openssl-dev python3-dev \
-		libxml2-dev libxslt-dev mariadb-dev build-base jpeg-dev zlib-dev
+RUN apk update && apk add gcc libc-dev make libffi-dev openssl-dev python3-dev libxml2-dev libxslt-dev mariadb-dev build-base jpeg-dev zlib-dev
 
-copy mali mali_project rdc stats django_preparation_entrypoint.sh manage.py requirements.txt $APP_HOME/
+copy . .
 
-run chmod 666 requirements.txt
+copy django_preparation_entrypoint.sh /opt/app/django_preparation_entrypoint.sh
 
 run pip install --no-cache-dir -r requirements.txt
 
-entrypoint ["django_preparation_entrypoint.sh"]
+
 
 

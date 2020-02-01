@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 from django.utils.translation import ugettext_lazy as _
 
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 COUNTRIES_OVERRIDE = {
     'NZ': _('Middle Earth'),
     'CI':  _('Ivory Cost'),
@@ -21,10 +25,6 @@ COUNTRIES_OVERRIDE = {
     'RE':  _('Reunion'),
     'BL': _('Saint Barthelemy'),
 }
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -104,7 +104,7 @@ WSGI_APPLICATION = 'mali_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-if os.environ.get('ENVIRONMENT', 'LOCAL'):
+if os.environ.get('ENVIRONMENT', 'LOCAL') == 'LOCAL':
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -115,10 +115,10 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'form_ghsa',
-            'USER': 'root',
-            'PASSWORD': 'soumaila',
-            'HOST': 'database',
+            'NAME': os.environ.get('MYSQL_DATABASE'),
+            'USER': os.environ.get('MYSQL_USER'),
+            'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+            'HOST': 'database', #the name of the service docker-compose
             'PORT': '3306',
         }
     }
@@ -141,8 +141,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'mali_project', 'static')
 MEDIA_ROOT =  os.path.join(STATIC_ROOT, 'img')
 
@@ -162,8 +162,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_URL = '/static/'
 
 CRISPY_TEMPLATE_PACK='semantic-ui'
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'semantic-ui')
-INTERNAL_IPS= ('51.254.116.225','91.165.0.97')

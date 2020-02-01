@@ -115,9 +115,10 @@ name_list= [
 id_cache = []
 
 def randomDate(start_date, end_date, output='datetime'):
-	delta= (end_date - start_date)
-	elapsed_second_delta= delta.total_seconds()
-	new_date= start_date + timedelta(seconds=randint(3600*24, elapsed_second_delta))
+	delta = (end_date - start_date)
+	elapsed_second_delta = delta.total_seconds()
+	print(elapsed_second_delta)
+	new_date = start_date + timedelta(seconds=randint(3600*24, elapsed_second_delta))
 	return (new_date if output == 'datetime' else new_date.date())
 
 
@@ -166,7 +167,8 @@ class TestRecord(TestCase):
 
 
 	def test_invalid_travel_date(self):
-		self.obj.date_voyage = randomDate(now, now + timedelta(days=-1))
+		now = datetime.now()
+		self.obj.date_voyage = randomDate(now - timedelta(days=2), now - timedelta(days=1))
 		data = model_to_dict(self.obj)
 		form = FormML(data)
 
