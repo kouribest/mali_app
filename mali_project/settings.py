@@ -116,8 +116,8 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': os.environ.get('MYSQL_DATABASE'),
-            'USER': os.environ.get('MYSQL_USER'),
-            'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+            'USER': 'root',
+            'PASSWORD': os.environ.get('MYSQL_ROOT_PASSWORD'),
             'HOST': 'database', #the name of the service docker-compose
             'PORT': '3306',
         }

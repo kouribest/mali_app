@@ -12,6 +12,6 @@ $('#scan_button').on('click', function(){
 				toastr.error('No cameras found.');
 			}
 		}).catch(function (e) {
-			toastr.error(e);
+			console.log(e)
 		});
 })

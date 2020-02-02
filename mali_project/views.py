@@ -41,7 +41,7 @@ def home(request):
 	else:
 		return render(request, 'mali_project/project_selector.html')
 
-def scanView(View):
+def scanView(request):
 	return render(request, 'mali_project/scan.html')
 
 # Requete ajax --> a deplacer dans une nouvelle application django

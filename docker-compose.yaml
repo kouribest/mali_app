@@ -3,26 +3,24 @@ version : "3"
 services:
     database:
         image: mysql:5.6
-        volumes:
-            - "~/mali_project/db:/var/lib/mysql"
         env_file:
              - env/.db_env
         ports:
             - "3306:3306"
     aeroform:
-        image: skouriba/aeroform
-        command: /bin/sh django_preparation_entrypoint.sh
+        image: skouriba/aeroform:1.2
+        command: ./wait-for-it.sh database:3306 -t 15 -- ./django_preparation_entrypoint.sh
         env_file:
             - env/.aero_env
+            - env/.db_env
         ports:
-            - "81:8000"
+            - "80:8000"
         deploy:
             restart_policy:
                 condition: on-failure
             replicas: 3
         depends_on:
             - "database"
-
     visualizer:
         image: dockersamples/visualizer:stable
         ports:
