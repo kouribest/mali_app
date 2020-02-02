@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
 The Aeroform is a web application which make airport self-registration more easiest for traveller.
-An administrator can on their side, check, correct, validate or devalidate travelers's registrations.
+Administrators can on their side, check, correct, validate or devalidate travelers's registrations.
 
 This webapp has been design for the moment for two countries:
 * Mali
@@ -58,11 +58,12 @@ $ docker-compose up -d
 $ docker container ls (to see if everything is going well)
 ```
 Verify the deployment by navigating to your server address in your preferred browser.
+
 ### Development
 
 Want to contribute? Great!
 
-It's a very new project.
+It's a very interesting project.
 You can ask for a pull-requests and make your involment.
 
 Feel free to contact me.
