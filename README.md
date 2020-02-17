@@ -59,6 +59,8 @@ $ docker container ls (to see if everything is going well)
 ```
 Verify the deployment by navigating to your server address in your preferred browser.
 
+NB: QRcode scanner will work only in https connexion
+
 ### Development
 
 Want to contribute? Great!
