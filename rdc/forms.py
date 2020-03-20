@@ -34,7 +34,6 @@ class FormRDC(FormBase):
 		fields='__all__'
 		exclude= ('etat',)
 		layout=[
-			("Field", "domain"),
 			("Text", "<h3 class=\"ui dividing header left aligned\">Identite du voyageur (Traveller's Identity)</h3>"),
 			("Field","identifiant"),
 			("Three Fields",

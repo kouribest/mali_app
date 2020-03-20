@@ -14,11 +14,11 @@ services:
             - env/.aero_env
             - env/.db_env
         ports:
-            - "80:8000"
+            - "81:8000"
         deploy:
             restart_policy:
                 condition: on-failure
-            replicas: 3
+            replicas: 1
         depends_on:
             - "database"
     visualizer:

@@ -28,15 +28,15 @@ DOMAIN_MAP = {
 	'Mali': MaliModel,
 	'Congo': RDCModel
 }
-domain = os.environ.get('DOMAIN', 'Mali')
+domain = os.environ.get('DJANGO_DOMAIN')
+
 
 
 
 def home(request):
-	
+	print(domain)
 	if domain:
-		form = FormML(initial={'domain': domain}) if domain == 'Mali' else FormRDC(
-			initial={'domain': domain})
+		form = FormML(initial={'domain': domain}) if domain == 'Mali' else FormRDC()
 		return render(request, 'mali_project/index.html', {'form': form})
 	else:
 		return render(request, 'mali_project/project_selector.html')

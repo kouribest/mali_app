@@ -38,7 +38,7 @@ class DomainMixin(object):
     """As everything depend on the subdomain, this will set attribute domain"""
 
     def dispatch(self, *args, **kwargs):
-        self.domain = os.environ.get('DOMAIN', 'Mali')
+        self.domain = os.environ.get('DJANGO_DOMAIN')
         self.model = MaliModel if self.domain == 'Mali' else RDCModel
         return super(DomainMixin, self).dispatch(*args, **kwargs)
 
